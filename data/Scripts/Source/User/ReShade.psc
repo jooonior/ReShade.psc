@@ -5,6 +5,12 @@ ScriptName ReShade native
 Int Property NO_RESHADE = -1 AutoReadOnly                                             ; /*
 {ReShade is not loaded.}                                                              ; */
 
+Int Property BAD_RUNTIME = -2 AutoReadOnly                                            ; /*
+{Requested runtime is not available.}                                                 ; */
+
+Int Property BAD_REGEX = -3 AutoReadOnly                                              ; /*
+{Invalid regular expression.}                                                         ; */
+
 bool Function OK() global native                                                      ; /*
 {Check whether ReShade is loaded.}                                                    ; */
 
@@ -19,3 +25,6 @@ int Function LogInfo(string asMessage) global native                            
 
 int Function LogDebug(string asMessage) global native                                 ; /*
 {Write `asMessage` debug message to ReShade's log.}                                   ; */
+
+int Function SetTechniqueState(string asTechniquePattern, bool abEnabled, int aiRuntime = 0) global native  ; /*
+{Enable/disable techniques whose names match specified regular expression.}                                 ; */

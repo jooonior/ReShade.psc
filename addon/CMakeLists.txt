@@ -23,7 +23,7 @@ target_include_directories(
 set_target_properties(
 	${PROJECT_NAME}
 	PROPERTIES
-	CXX_STANDARD 20
+	CXX_STANDARD 23
 	CXX_STANDARD_REQUIRED ON
 )
 
@@ -37,3 +37,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(reshade)
 target_include_directories(${PROJECT_NAME} PRIVATE "${reshade_SOURCE_DIR}/include")
+
+# Add RE2 and abseil (its dependency).
+
+FetchContent_Declare(
+	absl
+	GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+	GIT_TAG 20250512.1
+)
+set(ABSL_ENABLE_INSTALL ON)
+FetchContent_MakeAvailable(absl)
+FetchContent_Declare(
+	re2
+	GIT_REPOSITORY https://github.com/google/re2.git
+	GIT_TAG 2025-07-22
+)
+FetchContent_MakeAvailable(re2)
+target_link_libraries(${PROJECT_NAME} PRIVATE re2::re2)
