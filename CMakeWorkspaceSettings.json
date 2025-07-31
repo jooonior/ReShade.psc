@@ -1,0 +1,6 @@
+{
+  "enableCMake": true,
+  "sourceDirectory": [
+    "plugins/F4"
+  ]
+}

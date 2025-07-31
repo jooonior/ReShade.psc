@@ -1,0 +1,13 @@
+#pragma once
+
+#include "addon/version.hpp"
+
+namespace addon
+{
+	constexpr version_t version{
+		.major = @PROJECT_VERSION_MAJOR@,
+		.minor = @PROJECT_VERSION_MINOR@,
+		.patch = @PROJECT_VERSION_PATCH@,
+		.tweak = @PROJECT_VERSION_TWEAK@
+	};
+}

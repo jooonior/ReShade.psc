@@ -1,0 +1,34 @@
+diff --git a/CommonLibF4/include/RE/msvc/memory.h b/CommonLibF4/include/RE/msvc/memory.h
+index c8450c7..08160db 100644
+--- a/CommonLibF4/include/RE/msvc/memory.h
++++ b/CommonLibF4/include/RE/msvc/memory.h
+@@ -270,7 +270,7 @@ namespace RE::msvc
+ 
+ 		// 3c
+ 		unique_ptr(pointer a_ptr, const deleter_type& a_dtor) noexcept  //
+-			requires((std::is_lvalue_reference<deleter_type> &&
++			requires((std::is_lvalue_reference_v<deleter_type> &&
+ 					  std::is_const_v<deleter_type>)) :
+ 			super(a_ptr, a_dtor)
+ 		{}
+@@ -484,7 +484,7 @@ namespace RE::msvc
+ 		// 3c
+ 		template <class U>
+ 		unique_ptr(U a_ptr, const deleter_type& a_dtor) noexcept  //
+-			requires((std::is_lvalue_reference<deleter_type> &&
++			requires((std::is_lvalue_reference_v<deleter_type> &&
+ 					  std::is_const_v<deleter_type> &&
+ 					  detail::unique_ptr_array_convertible<U, unique_ptr>)) :
+ 			super(a_ptr, a_dtor)
+diff --git a/CommonLibF4/vcpkg.json b/CommonLibF4/vcpkg.json
+index b95c0a2..f621d51 100644
+--- a/CommonLibF4/vcpkg.json
++++ b/CommonLibF4/vcpkg.json
+@@ -10,5 +10,6 @@
+     "fmt",
+     "rsm-mmio",
+     "spdlog"
+-  ]
++  ],
++  "builtin-baseline": "dd3097e305afa53f7b4312371f62058d2e665320"
+ }
