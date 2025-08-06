@@ -11,6 +11,8 @@ using namespace reshade::api;
 // Wrap an invocable expression in a perfect-forwarding generic lambda.
 #define TO_LAMBDA(Func) ([&](auto&&... args) { return Func(std::forward<decltype(args)>(args)...); })
 
+#define RETURN_IF_FAILED(Result) do { if (Result < 0) return Result; } while(0);
+
 namespace
 {
 	int LogMessage(reshade::log::level level, std::string_view message)
@@ -69,31 +71,59 @@ namespace
 	auto RegExp = memoize([](std::string_view s) {
 		return RE2(absl::string_view{ s.data(), s.size() });
 	});
+
+	template<typename F>
+	int EnumerateTechniques(effect_runtime *runtime, std::string_view pattern, F f)
+	{
+		const RE2 &regex = RegExp(pattern);
+		if (!regex.ok())
+		{
+			addon::LogError("Error in RegExp {:?}: {}", pattern, regex.error());
+			return api::BAD_REGEX;
+		}
+
+		int count = 0;
+
+		runtime->enumerate_techniques(nullptr, [&](auto, effect_technique technique) {
+			std::string name = GetStringFromReShade(TO_LAMBDA(runtime->get_technique_name), technique);
+			if (!RE2::FullMatch(name, regex))
+				return;
+
+			std::invoke(f, technique);
+			count += 1;
+		});
+
+		return count;
+	}
 }
 
 int api::SetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, int aiRuntime)
 {
-	reshade::api::effect_runtime *runtime = addon::GetRuntime(aiRuntime);
+	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
 	if (!runtime)
 		return api::BAD_RUNTIME;
 
-	const RE2 &regex = RegExp(asTechniquePattern);
-	if (!regex.ok())
-	{
-		addon::LogError("Error in RegExp {:?}: {}", asTechniquePattern, regex.error());
-		return api::BAD_REGEX;
-	}
-
-	int count = 0;
-
-	runtime->enumerate_techniques(nullptr, [&](auto, effect_technique technique) {
-		std::string name = GetStringFromReShade(TO_LAMBDA(runtime->get_technique_name), technique);
-		if (!RE2::FullMatch(name, regex))
-			return;
-
+	int count = EnumerateTechniques(runtime, asTechniquePattern, [&](effect_technique technique) {
 		runtime->set_technique_state(technique, abEnabled);
 		count += 1;
 	});
 
 	return count;
+}
+
+int api::GetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, int aiRuntime)
+{
+	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
+	if (!runtime)
+		return api::BAD_RUNTIME;
+
+	bool all_match = true;
+
+	int count = EnumerateTechniques(runtime, asTechniquePattern, [&](effect_technique technique) {
+		all_match &= runtime->get_technique_state(technique) == abEnabled;
+	});
+
+	RETURN_IF_FAILED(count);
+
+	return all_match;
 }

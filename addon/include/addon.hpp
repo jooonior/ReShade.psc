@@ -37,6 +37,7 @@ namespace addon
 		INVOKE_CALLBACK(callback, api::LogInfo);
 		INVOKE_CALLBACK(callback, api::LogDebug);
 		INVOKE_CALLBACK(callback, api::SetTechniqueState);
+		INVOKE_CALLBACK(callback, api::GetTechniqueState);
 	}
 
 #undef INVOKE_CALLBACK

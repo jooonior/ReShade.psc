@@ -28,3 +28,6 @@ int Function LogDebug(string asMessage) global native                           
 
 int Function SetTechniqueState(string asTechniquePattern, bool abEnabled, int aiRuntime = 0) global native  ; /*
 {Enable/disable techniques whose names match specified regular expression.}                                 ; */
+
+int Function GetTechniqueState(string asTechniquePattern, bool abEnabled, int aiRuntime = 0) global native  ; /*
+{Check whether all techniques whose names match specified regular expression are enabled/disabled.}         ; */
