@@ -1,0 +1,25 @@
+PROJECT_NAME = ReShade.psc
+PROJECT_BRIEF = "Papyrus bindings for ReShade's addon API."
+
+INPUT                  = README.md data/Scripts/Source/User/ReShade.psc
+USE_MDFILE_AS_MAINPAGE = README.md
+
+EXTENSION_MAPPING      = psc=C++
+EXTRACT_ALL            = YES
+
+OUTPUT_DIRECTORY       = docs/out
+GENERATE_XML           = NO
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+PREDEFINED             = ScriptName= \
+                         ReShade= \
+                         native= \
+                         hidden= \
+                         Int=int \
+                         Function= \
+                         native= \
+
+JAVADOC_AUTOBRIEF      = YES
