@@ -13,9 +13,12 @@ template <typename F, typename R, typename... Args>
 struct memoize<F, R(Args...)>
 {
 private:
+	using key_type = std::tuple<std::decay_t<Args>...>;
+
 	F _func;
 	std::size_t _capacity;
-	std::list<std::size_t> _lru;
+	// Pointers into `std::unordered_map` are not invalidated on resize.
+	std::list<const key_type *> _lru;
 
 	// Makes `std::map::try_emplace` invoke the function when constructing values.
 	struct cached
@@ -23,13 +26,13 @@ private:
 		R value;
 		decltype(_lru)::iterator it;
 
-		cached(F &func, std::tuple<Args&&...> args) :
-			value{ std::apply(func, std::move(args)) }
+		cached(F &func, Args... args) :
+			value{ std::invoke(func, std::forward<Args>(args)...) }
 		{
 		}
 	};
 
-	std::unordered_map<std::size_t, cached, std::identity> _cache;
+	std::unordered_map<key_type, cached> _cache;
 
 public:
 	memoize(std::size_t capacity, F func) :
@@ -39,18 +42,15 @@ public:
 
 	const R &operator()(Args... args)
 	{
-		auto args_pack = std::forward_as_tuple(std::forward<Args>(args)...);
-		std::size_t hash = std::hash<decltype(args_pack)>{}(args_pack);
-
-		auto [it, created] = _cache.try_emplace(hash, _func, std::move(args_pack));
+		auto [it, created] = _cache.try_emplace(std::tuple(args...), _func, std::forward<Args>(args)...);
 		if (created)
 		{
 			if (_cache.size() > _capacity) {
-				_cache.erase(_lru.back());
+				_cache.erase(*_lru.back());
 				_lru.pop_back();
 			}
 
-			_lru.push_front(hash);
+			_lru.emplace_front(&it->first);
 			it->second.it = _lru.begin();
 		}
 		else
