@@ -1,33 +1,120 @@
-;/* NOTE: These weird comments are here because this file is also included in C++ code. /;
-ScriptName ReShade native
-{Bindings for ReShade's addon API.}                                                   ; */
+ScriptName ReShade native hidden
 
-Int Property NO_RESHADE = -1 AutoReadOnly                                             ; /*
-{ReShade is not loaded.}                                                              ; */
+;//
+/// ReShade is not loaded.
+//;
+Int Property NO_RESHADE = -1 AutoReadOnly;
 
-Int Property BAD_RUNTIME = -2 AutoReadOnly                                            ; /*
-{Requested runtime is not available.}                                                 ; */
+;//
+/// Requested ReShade runtime is not available.
+//;
+Int Property BAD_RUNTIME = -2 AutoReadOnly;
 
-Int Property BAD_REGEX = -3 AutoReadOnly                                              ; /*
-{Invalid regular expression.}                                                         ; */
+;//
+/// Regular expression is malformed.
+//;
+Int Property BAD_REGEX = -3 AutoReadOnly;
 
-bool Function OK() global native                                                      ; /*
-{Check whether ReShade is loaded.}                                                    ; */
+;//
+/// Check whether ReShade is loaded.
+///
+/// @returns `true` if ReShade is loaded, `false` otherwise.
+///
+/// @details
+//;
+bool Function OK() global native;
 
-int Function LogError(string asMessage) global native                                 ; /*
-{Write `asMessage` error message to ReShade's log.}                                   ; */
+;//
+/// Log an error message.
+///
+/// @param asMessage: The message to log.
+///
+/// @retval 0: The message was logged successfully.
+/// @retval NO_RESHADE
+///
+/// @details
+//;
+int Function LogError(string asMessage) global native;
 
-int Function LogWarning(string asMessage) global native                               ; /*
-{Write `asMessage` warning message to ReShade's log.}                                 ; */
+;//
+/// Log a warning message.
+///
+/// @param asMessage: The message to log.
+///
+/// @retval 0: The message was logged successfully.
+/// @retval NO_RESHADE
+///
+/// @details
+//;
+int Function LogWarning(string asMessage) global native;
 
-int Function LogInfo(string asMessage) global native                                  ; /*
-{Write `asMessage` info message to ReShade's log.}                                    ; */
+;//
+/// Log an info message.
+///
+/// @param asMessage: The message to log.
+///
+/// @retval 0: The message was logged successfully.
+/// @retval NO_RESHADE
+///
+/// @details
+//;
+int Function LogInfo(string asMessage) global native;
 
-int Function LogDebug(string asMessage) global native                                 ; /*
-{Write `asMessage` debug message to ReShade's log.}                                   ; */
+;//
+/// Log a debug message.
+///
+/// @param asMessage: The message to log.
+///
+/// @retval 0: The message was logged successfully.
+/// @retval NO_RESHADE
+///
+/// @details
+//;
+int Function LogDebug(string asMessage) global native;
 
-int Function SetTechniqueState(string asTechniquePattern, bool abEnabled, int aiRuntime = 0) global native  ; /*
-{Enable/disable techniques whose names match specified regular expression.}                                 ; */
+;//
+/// Set state (enabled or disabled) of techniques whose name matches a regular
+/// expression.
+///
+/// @param asTechniquePattern: Regular expression to match technique names.
+/// @param abEnabled: Whether to enable (`true`) or disable (`false`) matching
+///                   techniques.
+/// @param aiRuntime: Target ReShade runtime.
+///
+/// @returns
+/// Number of matching techniques whose state was set, or a negative error code.
+/// @retval NO_RESHADE
+/// @retval BAD_RUNTIME
+/// @retval BAD_REGEX
+///
+/// @details
+//;
+int Function SetTechniqueState( \
+    string asTechniquePattern, \
+    bool abEnabled, \
+    int aiRuntime = 0 \
+) global native;
 
-int Function GetTechniqueState(string asTechniquePattern, bool abEnabled, int aiRuntime = 0) global native  ; /*
-{Check whether all techniques whose names match specified regular expression are enabled/disabled.}         ; */
+;//
+/// Check whether all techniques whose names match a regular expression are in
+/// a specified state (enabled or disabled).
+///
+/// @param asTechniquePattern: Regular expression to match technique names.
+/// @param abEnabled: Whether to check for enabled (`true`) or disabled
+///                   (`false`) techniques.
+/// @param aiRuntime: Target ReShade runtime.
+///
+/// @returns
+/// 1 if all matching techniques are in the specified state, otherwise 0 or a
+/// negative error code.
+/// @retval NO_RESHADE
+/// @retval BAD_RUNTIME
+/// @retval BAD_REGEX
+///
+/// @details
+//;
+int Function GetTechniqueState( \
+    string asTechniquePattern, \
+    bool abEnabled, \
+    int aiRuntime = 0 \
+) global native;
