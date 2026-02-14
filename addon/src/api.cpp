@@ -125,5 +125,5 @@ int api::GetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, 
 
 	RETURN_IF_FAILED(count);
 
-	return all_match;
+	return all_match ? count : 0;
 }
