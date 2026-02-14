@@ -69,7 +69,7 @@ namespace
 		return buffer;
 	}
 
-	auto RegExp = memoize([](std::string_view s) {
+	auto RegExp = memoize(256, [](std::string_view s) {
 		return RE2(absl::string_view{ s.data(), s.size() });
 	});
 

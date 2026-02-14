@@ -2,6 +2,7 @@
 
 #include "addon/utils.hpp"
 
+#include <list>
 #include <unordered_map>
 #include <utility>
 
@@ -13,11 +14,14 @@ struct memoize<F, R(Args...)>
 {
 private:
 	F _func;
+	std::size_t _capacity;
+	std::list<std::size_t> _lru;
 
 	// Makes `std::map::try_emplace` invoke the function when constructing values.
 	struct cached
 	{
 		R value;
+		decltype(_lru)::iterator it;
 
 		cached(F &func, std::tuple<Args&&...> args) :
 			value{ std::apply(func, std::move(args)) }
@@ -28,8 +32,8 @@ private:
 	std::unordered_map<std::size_t, cached, std::identity> _cache;
 
 public:
-	memoize(F func) :
-		_func{ std::move(func) }
+	memoize(std::size_t capacity, F func) :
+		_func{ std::move(func) }, _capacity{ capacity }
 	{
 	}
 
@@ -37,13 +41,30 @@ public:
 	{
 		auto args_pack = std::forward_as_tuple(std::forward<Args>(args)...);
 		std::size_t hash = std::hash<decltype(args_pack)>{}(args_pack);
-		auto [it, _] = _cache.try_emplace(hash, _func, std::move(args_pack));
+
+		auto [it, created] = _cache.try_emplace(hash, _func, std::move(args_pack));
+		if (created)
+		{
+			if (_cache.size() > _capacity) {
+				_cache.erase(_lru.back());
+				_lru.pop_back();
+			}
+
+			_lru.push_front(hash);
+			it->second.it = _lru.begin();
+		}
+		else
+		{
+			// Move accessed key to front.
+			_lru.splice(_lru.begin(), _lru, it->second.it);
+		}
+
 		return it->second.value;
 	}
 };
 
 template <typename F>
-memoize(F) -> memoize<F>;
+memoize(std::size_t, F) -> memoize<F>;
 
 // Based on: https://stackoverflow.com/questions/7110301/generic-hash-for-tuples-in-unordered-map-unordered-set
 template <typename... Types>
