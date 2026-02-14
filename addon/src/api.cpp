@@ -12,6 +12,7 @@ using namespace reshade::api;
 #define TO_LAMBDA(Func) ([&](auto&&... args) { return Func(std::forward<decltype(args)>(args)...); })
 
 #define RETURN_IF_FAILED(Result) do { if (Result < 0) return Result; } while(0);
+#define RETURN_IF_BAD_RUNTIME(Runtime) do { if (Runtime == nullptr) return api::BAD_RUNTIME; } while(0);
 
 namespace
 {
@@ -100,12 +101,10 @@ namespace
 int api::SetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, int aiRuntime)
 {
 	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
-	if (!runtime)
-		return api::BAD_RUNTIME;
+	RETURN_IF_BAD_RUNTIME(runtime);
 
 	int count = EnumerateTechniques(runtime, asTechniquePattern, [&](effect_technique technique) {
 		runtime->set_technique_state(technique, abEnabled);
-		count += 1;
 	});
 
 	return count;
@@ -114,8 +113,7 @@ int api::SetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, 
 int api::GetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, int aiRuntime)
 {
 	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
-	if (!runtime)
-		return api::BAD_RUNTIME;
+	RETURN_IF_BAD_RUNTIME(runtime);
 
 	bool all_match = true;
 
