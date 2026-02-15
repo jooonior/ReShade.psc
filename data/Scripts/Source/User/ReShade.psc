@@ -120,6 +120,30 @@ int Function GetTechniqueState( \
 ) global native;
 
 ;//
+/// Count techniques in a specified state (enabled or disabled) whose names
+/// match a regular expression.
+///
+/// @param asTechniquePattern: Regular expression to match technique names.
+/// @param abEnabled: Whether to count enabled (`true`) or disabled (`false`)
+///                   techniques.
+/// @param aiRuntime: Target ReShade runtime.
+///
+/// @returns
+/// Number of matching techniques that are in the specified state, or a
+/// negative error code.
+/// @retval NO_RESHADE
+/// @retval BAD_RUNTIME
+/// @retval BAD_REGEX
+///
+/// @details
+//;
+int Function CheckTechniqueState( \
+    string asTechniquePattern, \
+    bool abEnabled, \
+    int aiRuntime = 0 \
+) global native;
+
+;//
 /// Define a preprocessor definition.
 ///
 /// @param asName: Name of the definition.

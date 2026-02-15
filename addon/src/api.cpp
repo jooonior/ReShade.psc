@@ -126,6 +126,22 @@ int api::GetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, 
 	return all_match ? count : 0;
 }
 
+int api::CheckTechniqueState(std::string_view asTechniquePattern, bool abEnabled, int aiRuntime)
+{
+	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
+	RETURN_IF_BAD_RUNTIME(runtime);
+
+	int count = 0;
+
+	int status = EnumerateTechniques(runtime, asTechniquePattern, [&](effect_technique technique) {
+		count += runtime->get_technique_state(technique) == abEnabled;
+	});
+
+	RETURN_IF_FAILED(status);
+
+	return count;
+}
+
 int api::SetPreprocessorDefinition(std::string_view asName, std::string_view asValue, int aiRuntime)
 {
 	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
