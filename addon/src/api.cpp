@@ -123,7 +123,7 @@ int api::GetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, 
 
 	RETURN_IF_FAILED(count);
 
-	return all_match ? count : 0;
+	return all_match;
 }
 
 int api::CheckTechniqueState(std::string_view asTechniquePattern, bool abEnabled, int aiRuntime)

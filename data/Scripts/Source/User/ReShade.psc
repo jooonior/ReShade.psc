@@ -105,8 +105,8 @@ int Function SetTechniqueState( \
 /// @param aiRuntime: Target ReShade runtime.
 ///
 /// @returns
-/// Number of matching techniques if all are in the specified state,
-/// otherwise 0 or a negative error code.
+/// 1 if all matching techniques are in the specified state, otherwise 0 or a
+/// negative error code.
 /// @retval NO_RESHADE
 /// @retval BAD_RUNTIME
 /// @retval BAD_REGEX
