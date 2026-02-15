@@ -118,3 +118,20 @@ int Function GetTechniqueState( \
     bool abEnabled, \
     int aiRuntime = 0 \
 ) global native;
+
+;//
+/// Define a preprocessor definition.
+///
+/// @param asName: Name of the definition.
+/// @param asValue: Value of the definition.
+///
+/// @retval 0: The definition was defined successfully.
+/// @retval NO_RESHADE
+///
+/// @details
+//;
+int Function SetPreprocessorDefinition( \
+    string asName, \
+    string asValue, \
+    int aiRuntime = 0 \
+) global native;

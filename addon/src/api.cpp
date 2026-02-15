@@ -125,3 +125,12 @@ int api::GetTechniqueState(std::string_view asTechniquePattern, bool abEnabled, 
 
 	return all_match ? count : 0;
 }
+
+int api::SetPreprocessorDefinition(std::string_view asName, std::string_view asValue, int aiRuntime)
+{
+	effect_runtime *runtime = addon::GetRuntime(aiRuntime);
+	RETURN_IF_BAD_RUNTIME(runtime);
+
+	runtime->set_preprocessor_definition(asName.data(), asValue.data());
+	return 0;
+}
